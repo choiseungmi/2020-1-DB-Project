@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
-  res.render('index.ejs', {title: "슬기로운 격리생활", description:"dsgd",randvalue:'sds' });
+  res.render('index.html', {title: "슬기로운 격리생활", description:"dsgd",randvalue:'sds' });
 })
 
 
