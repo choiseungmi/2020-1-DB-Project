@@ -17,17 +17,40 @@
 	<header id="header">
 		<h1>코로나19, 같이 이겨냅시다!</h1>
 			<p>본 웹페이지는 자가격리자를 위해 마련된 공간입니다.</p>
-			<p>귀하의 로그인 정보를 아래에 입력해주세요.</p>
+			<%if(user){%>
+
+			<p><%=user['name']%>님 환영합니다 \^o^/</p>
+			<%}else{%>
+				<p>귀하의 로그인 정보를 아래에 입력해주세요.</p>
+				<%}%>
 	</header>
 
 	<!-- Signup Form -->
-
-		<form id="signup-form" method="POST" action="/login">
+	<script>
+	function regist(){
+			account.method="GET"
+			account.action="/signup"; //서버의 url
+			account.submit();
+	}
+	function Dash(){
+			account.action="/detail"; //서버의 url
+			account.submit();
+	}
+	</script>
+		<%if(user){%>
+		<form name=account id="signup-form" method="GET" action="/logout">
 			<!-- <form id="signup-form" method="post" action="member/signup_check.php"> -->
-		<input type="text" name="ID" id="ID" placeholder="ID">
-		<input type="password" name="password" id="password" placeholder="Password">
-		<input type="submit" value="Sign Up">
-			<span class="message"></span><p><%= message %></p></form>
+		<input type="submit" value="logout">
+		<input type="submit" value="Go to Dashboard" onclick=Dash()>
+			<span class="message"></span></form>
+		<%}else{%>
+			<form name=account id="signup-form" method="POST" action="/login">
+			<input type="text" name="ID" id="ID" placeholder="ID">
+			<input type="password" name="password" id="password" placeholder="Password">
+			<input type="submit" value="Sign in">
+			<input type="button" value="Sign Up" onclick=regist()>
+				<span class="message"></span><p><%= message %></p></form>
+		<%}%>
 
 	<p>
 		로그인 없이도 통계자료를 확인할 수 있습니다 : <a href="statepage/index.html" type="button">통계자료 확인하기</a>
