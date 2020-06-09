@@ -9,7 +9,7 @@
 		<title>슬기로운 격리생활</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-		<link rel="stylesheet" href="assets/css/main.css">
+		<link rel="stylesheet" href="./assets/css/main.css">
 	</head>
 	<body class="">
 
@@ -21,11 +21,14 @@
 	</header>
 
 	<!-- Signup Form -->
-		<form id="signup-form" method="post" action="member/signup_check.php">
+
+		<form id="signup-form" method="POST" action="/login">
+			<!-- <form id="signup-form" method="post" action="member/signup_check.php"> -->
 		<input type="text" name="ID" id="ID" placeholder="ID">
 		<input type="password" name="password" id="password" placeholder="Password">
 		<input type="submit" value="Sign Up">
-			<span class="message"></span></form>
+			<span class="message"></span><p><%= message %></p></form>
+
 	<p>
 		로그인 없이도 통계자료를 확인할 수 있습니다 : <a href="statepage/index.html" type="button">통계자료 확인하기</a>
 	</p>
@@ -43,8 +46,9 @@
 		</footer>
 
 		<!-- Scripts -->
-			<script src="assets/js/main.js"></script><div id="bg"><div class="" style="background-image: url(&quot;images/bg01.jpg&quot;); background-position: center center;"></div><div class="visible top" style="background-image: url(&quot;images/bg02.jpg&quot;); background-position: center center;"></div><div class="" style="background-image: url(&quot;images/bg03.jpg&quot;); background-position: center center;"></div></div>
+		<!-- <script src="assets/js/main.js"></script> -->
+			<div id="bg"><div class="" style="background-image: url(&quot;images/bg01.jpg&quot;); background-position: center center;"></div><div class="visible top" style="background-image: url(&quot;images/bg02.jpg&quot;); background-position: center center;"></div><div class="" style="background-image: url(&quot;images/bg03.jpg&quot;); background-position: center center;"></div></div>
 
-	
+
 </body>
 </html>
