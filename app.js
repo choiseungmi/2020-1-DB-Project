@@ -46,8 +46,8 @@ app.use(expressSession({
 }));
 
 app.use(function(req, res, next) {
-     res.locals.user = req.session.user;
-     next();
+  res.locals.user = req.session.user;
+  next();
 });
 
 app.get('/', (req, res) => {
@@ -62,31 +62,36 @@ app.get('/login', (req, res) => {
 app.get("/signup", function(req, res) {
   res.render('register.ejs');
 })
-app.post("/singup", function(request, response) {
+app.post("/signup", function(request, response) {
   console.log(request.body);
   //오라클에 접속해서 insert문을 실행한다.
   var id = request.body.id;
   var name = request.body.name;
   var email = request.body.email;
   var password = request.body.password;
+  var password2 = request.body.password2;
   var address = request.body.address;
 
   // 쿼리문 실행
-  conn.execute(`insert into accounts(user_id, name, email, password, address) values('${id}', '${name}', '${email}', '${password}','${address}')`, function(err, result) {
-    if (err) {
-      console.log("등록중 에러가 발생했어요!!", err);
-      response.writeHead(500, {
-        "ContentType": "text/html"
-      });
-      response.end("fail!!");
-    } else {
-      console.log("result : ", result);
-      response.writeHead(200, {
-        "ContentType": "text/html"
-      });
-      response.end("success!!");
-    }
-  });
+  if (password == password2) {
+    conn.execute(`insert into accounts(user_id, name, email, password, address) values('${id}', '${name}', '${email}', '${password}','${address}')`, function(err, result) {
+      if (err) {
+        console.log("등록중 에러가 발생했어요!!", err);
+        response.writeHead(500, {
+          "ContentType": "text/html"
+        });
+        response.end("fail!!");
+      } else {
+        console.log("result : ", result);
+        response.writeHead(200, {
+          "ContentType": "text/html"
+        });
+        response.end("success!!");
+      }
+    });
+  } else {
+    response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
+  }
 
 });
 
@@ -111,13 +116,12 @@ app.post('/login', (req, res) => {
         console.log("output:", result.rows, trim(password));
         if (result.rows.length > 0) {
           if (password == trim(result.rows[0][0])) {
-            req.session.user =
-                {
-                    id: id,
-                    pw: password,
-                    name: result.rows[0][1],
-                    authorized: true
-                };
+            req.session.user = {
+              id: id,
+              pw: password,
+              name: result.rows[0][1],
+              authorized: true
+            };
             res.render('detail.ejs');
             console.log("sucess: " + id + password);
             console.log(req.session.user['name']);
@@ -178,9 +182,6 @@ router.route('/logout').get( //설정된 쿠키정보를 본다
       console.log('로긴 안되어 있음');
       res.redirect('/');
     }
-
-
-
   }
 );
 
@@ -195,14 +196,7 @@ app.all('*',
     res.status(404).send('<h1> 요청 페이지 없음 </h1>');
   }
 );
-//
-// //웹서버를 app 기반으로 생성
-// var appServer = http.createServer(app);
-// appServer.listen(app.get('port'),
-//     function () {
-//         console.log('express 웹서버 실행' + app.get('port'));
-//     }
-// );
+
 function trim(value) {
   value = value.replace(/\s+/, ""); //왼쪽 공백제거
   value = value.replace(/\s+$/g, ""); //오른쪽 공백제거
