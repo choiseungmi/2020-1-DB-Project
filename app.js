@@ -122,8 +122,10 @@ app.post('/login', (req, res) => {
               name: result.rows[0][1],
               authorized: true
             };
-            res.render('detail.ejs');
-            console.log("sucess: " + id +" "+ password);
+            res.render('detail.ejs',{
+	      message: id
+	    });
+            console.log("sucess: " + id + password);
             console.log(req.session.user['name']);
           } else {
             console.log("wrong: " + id + password);
@@ -136,7 +138,7 @@ app.post('/login', (req, res) => {
             message: '존재하지 않는 아이디입니다'
           });
           res.end("fail!!");
-          console.log("0<user: " + id +" "+ password);
+          console.log("0<user: " + id + password);
         }
         // console.log(result.metaData);  //테이블 스키마
         //         console.log(result.rows);
