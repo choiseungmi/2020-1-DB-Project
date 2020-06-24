@@ -76,3 +76,13 @@ CREATE TABLE officer(
   department CHAR(15)
 );
 ```
+storage table
+---------------
+```
+CREATE TABLE storage(
+  id CHAR(50) primary key,
+  area CHAR(50),
+  product CHAR(50),
+  num NUMBER default 0
+);
+```
