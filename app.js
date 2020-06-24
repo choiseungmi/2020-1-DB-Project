@@ -76,8 +76,9 @@ app.post("/signup", function(request, response) {
   var tel = request.body.tel;
   // 쿼리문 실행
   if (password == password2) {
-    conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
-                  values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
+    conn.execute(`select name
+                  from officer
+                  order by manage_num`,
       function(err, result) {
         if (err) {
           console.log("등록중 에러가 발생했어요!!", err);
@@ -86,10 +87,40 @@ app.post("/signup", function(request, response) {
           });
           response.end("fail!!");
         } else {
-          console.log("result : ", result);
-          response.redirect("/");
+          if (result.rows.length > 0) {
+            var officer = result.rows[0][0];
+            conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel, officer_name)
+                        values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}','${officer}')`,
+              function(err, result) {
+                if (err) {
+                  console.log("등록중 에러가 발생했어요!!", err);
+                  response.writeHead(500, {
+                    "ContentType": "text/html"
+                  });
+                  response.end("fail!!");
+                } else {
+                  conn.execute(`update officer
+                              set manage_num=manage_num+1
+                              where name='${officer}'`,
+                    function(err, result) {
+                      if (err) {
+                        console.log("등록중 에러가 발생했어요!!", err);
+                        response.writeHead(500, {
+                          "ContentType": "text/html"
+                        });
+                        response.end("fail!!");
+                      } else {
+                        console.log("result : ", result);
+                        response.redirect("/");
+                      }
+                    });
+                }
+              });
+
+          }
         }
       });
+
     // conn.commit();
   } else {
     response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
@@ -114,7 +145,7 @@ app.post("/emergency", function(request, response) {
     conn.execute(`select name
                   from hospital
                   where area in (select address from accounts where name='${name}') and room <> 0
-                  order by (maximum-waiting)*room`, function(err, result) {
+                  order by (maximum-waiting)*room DESC`, function(err, result) {
       if (err) {
         response.writeHead(500, {
           "ContentType": "text/html"
@@ -205,14 +236,15 @@ app.post('/login', (req, res) => {
   var password = req.body.password;
   if (req.session.user) {
     console.log('이미 로그인 되어 있음');
-      res.render('detail.ejs',{
-        name: req.session.user.name,
-        start_date: req.session.user.start_date,
-        end_date: req.session.user.end_date,
-        address: req.session.user.address
-      });
+    res.render('detail.ejs', {
+      name: req.session.user.name,
+      start_date: req.session.user.start_date,
+      end_date: req.session.user.end_date,
+      address: req.session.user.address,
+      address: req.session.user.officer
+    });
   } else {
-    conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD'), address from accounts where user_id='${id}'`, function(err, result) {
+    conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD'), address, officer_name from accounts where user_id='${id}'`, function(err, result) {
       if (err) {
         res.writeHead(404, {
           "ContentType": "text/html"
@@ -228,13 +260,15 @@ app.post('/login', (req, res) => {
               start_date: result.rows[0][2],
               end_date: result.rows[0][3],
               address: result.rows[0][4],
+              officer: result.rows[0][5],
               authorized: true
             };
             res.render('detail.ejs', {
               name: result.rows[0][1],
               start_date: result.rows[0][2],
               end_date: result.rows[0][3],
-              address: result.rows[0][4]
+              address: result.rows[0][4],
+              officer: result.rows[0][5]
             });
           } else {
             res.render('index.ejs', {
@@ -258,11 +292,12 @@ router.route('/detail').get(
     //세션정보는 req.session 에 들어 있다
     if (req.session.user) //세션에 유저가 있다면
     {
-      res.render('detail.ejs',{
+      res.render('detail.ejs', {
         name: req.session.user.name,
         start_date: req.session.user.start_date,
         end_date: req.session.user.end_date,
-        address: req.session.user.address
+        address: req.session.user.address,
+        address: req.session.user.officer
       });
     } else {
       res.redirect('/');
