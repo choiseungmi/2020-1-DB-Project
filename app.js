@@ -258,7 +258,12 @@ router.route('/detail').get(
     //세션정보는 req.session 에 들어 있다
     if (req.session.user) //세션에 유저가 있다면
     {
-      res.render('detail.ejs');
+      res.render('detail.ejs',{
+        name: req.session.user.name,
+        start_date: req.session.user.start_date,
+        end_date: req.session.user.end_date,
+        address: req.session.user.address
+      });
     } else {
       res.redirect('/');
     }
