@@ -50,7 +50,7 @@ CREATE TABLE isolation (
   start_date DATE NOT NULL,
   end_date DATE,
   symptom INT default 0,
-  CHECK (enddate >= startdate + (INTERVAL '14' DAY)),
+  CHECK (end_date >= start_date + (INTERVAL '14' DAY)),
   PRIMARY KEY(user_id)
 );
 ```
