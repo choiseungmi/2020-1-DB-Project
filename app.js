@@ -8,7 +8,7 @@ const fs = require("fs");
 const oracledb = require("oracledb");
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
-var moment=require('moment');
+var moment = require('moment');
 app.use(express.static('views'));
 // app.use(express.static('views/statepage/vendor'));
 // app.set('views', './views/statepage');
@@ -73,23 +73,23 @@ app.post("/signup", function(request, response) {
   var password = request.body.password;
   var password2 = request.body.password2;
   var address = request.body.address;
-  var tel=request.body.tel;
+  var tel = request.body.tel;
   // 쿼리문 실행
   if (password == password2) {
     conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
                   values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
-                  function(err, result) {
-      if (err) {
-        console.log("등록중 에러가 발생했어요!!", err);
-        response.writeHead(500, {
-          "ContentType": "text/html"
-        });
-        response.end("fail!!");
-      } else {
-        console.log("result : ", result);
-        response.redirect("/");
-      }
-    });
+      function(err, result) {
+        if (err) {
+          console.log("등록중 에러가 발생했어요!!", err);
+          response.writeHead(500, {
+            "ContentType": "text/html"
+          });
+          response.end("fail!!");
+        } else {
+          console.log("result : ", result);
+          response.redirect("/");
+        }
+      });
     // conn.commit();
   } else {
     response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
@@ -98,38 +98,60 @@ app.post("/signup", function(request, response) {
 
 app.get("/emergency", function(request, response) {
   if (request.session.user) {
-    response.render('emergency.ejs', {name:request.session.user.name });
-  }else{
+    response.render('emergency.ejs', {
+      name: request.session.user.name,
+      hospital: null
+    });
+  } else {
     response.redirect('/');
   }
-    // conn.commit();
+  // conn.commit();
 });
 app.post("/emergency", function(request, response) {
-  var id = request.body.id;
   // 쿼리문 실행
   if (request.session.user) {
-    // conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
-    //               values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
-    //               function(err, result) {
-    //   if (err) {
-    //     response.writeHead(500, {
-    //       "ContentType": "text/html"
-    //     });
-    //     response.end("fail!!");
-    //   } else {
-        response.render('emergency.ejs', {name:request.session.user.name });
-      // }
-    // });
-  }else{
+    var name = request.session.user.name;
+    conn.execute(`select name
+                  from hospital
+                  where area in (select address from accounts where name='${name}') and room <> 0
+                  order by (maximum-waiting)*room`, function(err, result) {
+      if (err) {
+        response.writeHead(500, {
+          "ContentType": "text/html"
+        });
+        response.end("fail!!");
+      } else {
+        console.log(result);
+        if (result.rows.length > 0) {
+          var hospital = result.rows[0][0];
+          // conn.execute(`update hospital set room=0 where name='${hospital}'`,
+          //   function(err, result) {
+          //     if (err) {
+          //       response.writeHead(500, {
+          //         "ContentType": "text/html"
+          //       });
+          //       response.end("fail!!");
+          //     }
+          //   });
+          response.render('emergency.ejs', {
+            name: name,
+            hospital: hospital
+          });
+        }
+      }
+    });
+  } else {
     response.redirect('/');
   }
-    // conn.commit();
+  // conn.commit();
 });
 
 app.get("/product", function(request, response) {
   if (request.session.user) {
-        response.render('product.ejs', {name:request.session.user.name });
-  }else{
+    response.render('product.ejs', {
+      name: request.session.user.name
+    });
+  } else {
     response.redirect('/');
   }
 });
@@ -146,13 +168,15 @@ app.post("/product", function(request, response) {
     //     });
     //     response.end("fail!!");
     //   } else {
-        response.render('product.ejs', {name:request.session.user.name });
-      // }
+    response.render('product.ejs', {
+      name: request.session.user.name
+    });
+    // }
     // });
-  }else{
+  } else {
     response.redirect('/');
   }
-    // conn.commit();
+  // conn.commit();
 });
 
 app.post('/login', (req, res) => {
@@ -177,11 +201,11 @@ app.post('/login', (req, res) => {
               name: result.rows[0][1],
               authorized: true
             };
-            res.render('detail.ejs',{
-	      name: result.rows[0][1],
-        start_date:  result.rows[0][2],
-        end_date:  result.rows[0][3]
-	    });
+            res.render('detail.ejs', {
+              name: result.rows[0][1],
+              start_date: result.rows[0][2],
+              end_date: result.rows[0][3]
+            });
           } else {
             res.render('index.ejs', {
               message: '비밀번호가 틀렸습니다'

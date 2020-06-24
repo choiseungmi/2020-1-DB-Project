@@ -80,14 +80,14 @@
 
       <!-- Nav Item - Charts -->
       <li class="nav-item">
-        <form name="emergency" action="/emergency" method="POST">
+        <form name="emergency" action="/emergency" method="GET">
         <a class="nav-link" href="javascript:document.emergency.submit()">
           <i class="fas fa-fw fa-chart-area"></i>
           <span>응급상황발생</span></a>
         </form>
       </li>
       <!-- Nav Item - Tables -->
-      <form name="product" action="/product" method="POST">
+      <form name="product" action="/product" method="GET">
       <li class="nav-item">
         <a class="nav-link" href="javascript:document.product.submit()">
           <i class="fas fa-fw fa-table"></i>
@@ -310,8 +310,21 @@
             <a href="javascript:document.subemer.submit()" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i ></i>응급요청</a>
           </div>
         </form>
+        <%if (hospital!=null){%>
 
 
+        <div class="card shadow mb-4">
+          <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">병원 배정</h6>
+          </div>
+          <div class="card-body">
+            <div class="text-center">
+              <%= hospital %>
+            </div>
+
+          </div>
+        </div>
+        <%}%>
           <!-- Content Row -->
           <div class="row">
 
