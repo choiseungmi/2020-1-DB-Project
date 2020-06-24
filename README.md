@@ -16,12 +16,12 @@ accounts table
 CREATE TABLE accounts (
 	user_id	CHAR(50) primary key,
 	name CHAR(50),
-  email CHAR(50) NOT NULL,
-  password CHAR(100) NOT NULL,
-  address CHAR(50),
-  start_date DATE,
-  end_date DATE,
-  state NUMBER,
-  tel CHAR(15)
+	email CHAR(50) NOT NULL,
+	password CHAR(100) NOT NULL,
+	address CHAR(50),
+	start_date DATE,
+	end_date DATE,
+	state NUMBER,
+	tel CHAR(15)
 );
 ```
