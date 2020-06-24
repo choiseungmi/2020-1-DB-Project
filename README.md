@@ -9,3 +9,16 @@
 By choiseungmi/rollingman1
 
 It has an interface that performs the functions of emergency request, relief goods request, and statistical view using the self-isolator DB.
+
+# accounts table
+CREATE TABLE accounts (
+	user_id	CHAR(50) primary key,
+	name CHAR(50),
+  email CHAR(50) NOT NULL,
+  password CHAR(100) NOT NULL,
+  address CHAR(50),
+  start_date DATE,
+  end_date DATE,
+  state NUMBER,
+  tel CHAR(15)
+);
