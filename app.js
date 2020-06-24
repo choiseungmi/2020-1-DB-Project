@@ -8,6 +8,7 @@ const fs = require("fs");
 const oracledb = require("oracledb");
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
+var moment=require('moment');
 app.use(express.static('views'));
 // app.use(express.static('views/statepage/vendor'));
 // app.set('views', './views/statepage');
@@ -34,7 +35,7 @@ oracledb.getConnection({
   }
   conn = con;
 });
-// oracledb.autoCommit = true;
+oracledb.autoCommit = true;
 
 //쿠키와 세션을 미들웨어로 등록
 app.use(cookieParser());
@@ -61,6 +62,9 @@ app.get('/login', (req, res) => {
   res.redirect('statepage/login.html');
 })
 
+app.get('/signup', (req, res) => {
+  res.render('register.ejs');
+})
 app.post("/signup", function(request, response) {
   //오라클에 접속해서 insert문을 실행한다.
   var id = request.body.id;
@@ -69,10 +73,11 @@ app.post("/signup", function(request, response) {
   var password = request.body.password;
   var password2 = request.body.password2;
   var address = request.body.address;
+  var tel=request.body.tel;
   // 쿼리문 실행
   if (password == password2) {
-    conn.execute(`insert into accounts(user_id, name, email, password, address)
-                  values('${id}', '${name}', '${email}', '${password}','${address}')`,
+    conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
+                  values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
                   function(err, result) {
       if (err) {
         console.log("등록중 에러가 발생했어요!!", err);
@@ -85,7 +90,7 @@ app.post("/signup", function(request, response) {
         response.redirect("/");
       }
     });
-    conn.commit();
+    // conn.commit();
   } else {
     response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
   }
