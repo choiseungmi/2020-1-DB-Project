@@ -124,18 +124,23 @@ app.post("/emergency", function(request, response) {
         console.log(result);
         if (result.rows.length > 0) {
           var hospital = result.rows[0][0];
-          // conn.execute(`update hospital set room=0 where name='${hospital}'`,
-          //   function(err, result) {
-          //     if (err) {
-          //       response.writeHead(500, {
-          //         "ContentType": "text/html"
-          //       });
-          //       response.end("fail!!");
-          //     }
-          //   });
+          conn.execute(`update hospital set room=room-1 where name='${hospital}'`,
+            function(err, result) {
+              if (err) {
+                response.writeHead(500, {
+                  "ContentType": "text/html"
+                });
+                response.end("fail!!");
+              }
+            });
           response.render('emergency.ejs', {
             name: name,
             hospital: hospital
+          });
+        }else{
+          response.render('emergency.ejs', {
+            name: name,
+            hospital: "병원이 없습니다"
           });
         }
       }
