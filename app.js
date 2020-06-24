@@ -96,6 +96,14 @@ app.post("/signup", function(request, response) {
   }
 });
 
+app.get("/emergency", function(request, response) {
+  if (request.session.user) {
+    response.render('emergency.ejs', {name:request.session.user.name });
+  }else{
+    response.redirect('/');
+  }
+    // conn.commit();
+});
 app.post("/emergency", function(request, response) {
   var id = request.body.id;
   // 쿼리문 실행
@@ -118,6 +126,13 @@ app.post("/emergency", function(request, response) {
     // conn.commit();
 });
 
+app.get("/product", function(request, response) {
+  if (request.session.user) {
+        response.render('product.ejs', {name:request.session.user.name });
+  }else{
+    response.redirect('/');
+  }
+});
 app.post("/product", function(request, response) {
   var id = request.body.id;
   // 쿼리문 실행
