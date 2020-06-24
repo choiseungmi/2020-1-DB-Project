@@ -90,7 +90,7 @@ app.post("/signup", function(request, response) {
           if (result.rows.length > 0) {
             var officer = result.rows[0][0];
             conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel, officer_name)
-                        values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}','${officer}')`,
+                          values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}','${officer}')`,
               function(err, result) {
                 if (err) {
                   console.log("등록중 에러가 발생했어요!!", err);
@@ -241,7 +241,7 @@ app.post('/login', (req, res) => {
       start_date: req.session.user.start_date,
       end_date: req.session.user.end_date,
       address: req.session.user.address,
-      address: req.session.user.officer
+      officer: req.session.user.officer
     });
   } else {
     conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD'), address, officer_name from accounts where user_id='${id}'`, function(err, result) {
@@ -297,7 +297,7 @@ router.route('/detail').get(
         start_date: req.session.user.start_date,
         end_date: req.session.user.end_date,
         address: req.session.user.address,
-        address: req.session.user.officer
+        officer: req.session.user.officer
       });
     } else {
       res.redirect('/');
