@@ -30,24 +30,25 @@ stat table
 ```
 CREATE TABLE STAT (
   area CHAR(50) NOT NULL,
-  확진자수 INT default 0,
-  자가격리자수 INT default 0,
-  격리해제수 INT default 0,
+  corona_num INT default 0,
+  isol_num INT default 0,
+  nisol_num INT default 0,
   PRIMARY KEY(area)
 );
+// corona_num : 확진자수, isol_num : 격리자수, nisol_num:격리해제수
 ```
 자가격리자 table
 ---------------
 ```
-CREATE TABLE 자가격리자 (
+CREATE TABLE isolation (
   user_id CHAR(50) NOT NULL,
   area CHAR(50),
   address CHAR(100),
   name CHAR(10) NOT NULL,
   password CHAR(100),
   phone INT,
-  startdate DATE NOT NULL,
-  enddate DATE,
+  start_date DATE NOT NULL,
+  end_date DATE,
   symptom INT default 0,
   CHECK (enddate >= startdate + (INTERVAL '14' DAY)),
   PRIMARY KEY(user_id)
