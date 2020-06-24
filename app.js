@@ -61,11 +61,7 @@ app.get('/login', (req, res) => {
   res.redirect('statepage/login.html');
 })
 
-app.get("/signup", function(req, res) {
-  res.render('register.ejs');
-})
 app.post("/signup", function(request, response) {
-  console.log(request.body);
   //오라클에 접속해서 insert문을 실행한다.
   var id = request.body.id;
   var name = request.body.name;
@@ -73,10 +69,11 @@ app.post("/signup", function(request, response) {
   var password = request.body.password;
   var password2 = request.body.password2;
   var address = request.body.address;
-
   // 쿼리문 실행
   if (password == password2) {
-    conn.execute(`insert into accounts(user_id, name, email, password, address) values('${id}', '${name}', '${email}', '${password}','${address}')`, function(err, result) {
+    conn.execute(`insert into accounts(user_id, name, email, password, address)
+                  values('${id}', '${name}', '${email}', '${password}','${address}')`,
+                  function(err, result) {
       if (err) {
         console.log("등록중 에러가 발생했어요!!", err);
         response.writeHead(500, {
@@ -117,7 +114,9 @@ app.post('/login', (req, res) => {
               name: result.rows[0][1],
               authorized: true
             };
-            res.render('detail.ejs');
+            res.render('detail.ejs',{
+	      message: id
+	    });
           } else {
             res.render('index.ejs', {
               message: '비밀번호가 틀렸습니다'
