@@ -33,7 +33,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
           <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        <div class="sidebar-brand-text mx-3">슬기로운 자가격리</div>
       </a>
 
       <!-- Divider -->
@@ -319,11 +319,18 @@
               <div class="text-center">
 
               </div>
+              <% if (message == null){%>
               <form method="post" action='/product'>
-                <label><input type="checkbox" name="mask" value="mask"> mask</label><br>
-                <label><input type="checkbox" name="food" value="food"> food</label><br>
+                <label><input type="checkbox" name="pro[]" value="mask"> mask</label><br>
+                <label><input type="checkbox" name="pro[]" value="food"> food</label><br>
+                <label><input type="checkbox" name="pro[]" value="clear"> 손소독제</label><br>
+                <label><input type="checkbox" name="pro[]" value="medi"> 약</label><br>
+                <label><input type="checkbox" name="pro[]" value="hobb"> 취미용품</label><br>
+                <label><input type="checkbox" name="pro[]" value="tem"> 온도계</label><br>
                 <p><input type="submit" value="Submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"> <input type="reset" value="Reset" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"></p>
-
+                <%}else{%>
+                <p><%=message%></p>
+                <%}%>
               </form>
             </div>
           </div>

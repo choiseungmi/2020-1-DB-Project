@@ -124,7 +124,9 @@ app.post("/emergency", function(request, response) {
         console.log(result);
         if (result.rows.length > 0) {
           var hospital = result.rows[0][0];
-          conn.execute(`update hospital set room=room-1 where name='${hospital}'`,
+          conn.execute(`update hospital
+                        set room=room-1
+                        where name='${hospital}'`,
             function(err, result) {
               if (err) {
                 response.writeHead(500, {
@@ -137,7 +139,7 @@ app.post("/emergency", function(request, response) {
             name: name,
             hospital: hospital
           });
-        }else{
+        } else {
           response.render('emergency.ejs', {
             name: name,
             hospital: "병원이 없습니다"
@@ -154,30 +156,44 @@ app.post("/emergency", function(request, response) {
 app.get("/product", function(request, response) {
   if (request.session.user) {
     response.render('product.ejs', {
-      name: request.session.user.name
+      name: request.session.user.name,
+      message: null
     });
   } else {
     response.redirect('/');
   }
 });
 app.post("/product", function(request, response) {
-  var id = request.body.id;
+  var products = request.body.pro;
   // 쿼리문 실행
   if (request.session.user) {
-    // conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
-    //               values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
-    //               function(err, result) {
-    //   if (err) {
-    //     response.writeHead(500, {
-    //       "ContentType": "text/html"
-    //     });
-    //     response.end("fail!!");
-    //   } else {
+    for (pro in products) {
+      conn.execute(`update storage
+                  set num=num-1
+                  where area in (select address from accounts where name='${request.session.user.name}')
+                  and product='${pro}'`,
+        function(err, result) {
+          if (err) {
+            response.writeHead(500, {
+              "ContentType": "text/html"
+            });
+            response.end("fail!!");
+          } else {
+            console.log(pro);
+            console.log(products[products.length - 1]);
+            if (pro == products[products.length - 1]) {
+              response.render('product.ejs', {
+                name: request.session.user.name,
+                message: '요청되었습니다.'
+              });
+            }
+          }
+        });
+    }
     response.render('product.ejs', {
-      name: request.session.user.name
+      name: request.session.user.name,
+      message: '요청되었습니다.'
     });
-    // }
-    // });
   } else {
     response.redirect('/');
   }
@@ -189,9 +205,14 @@ app.post('/login', (req, res) => {
   var password = req.body.password;
   if (req.session.user) {
     console.log('이미 로그인 되어 있음');
-    res.render('detail.ejs');
+      res.render('detail.ejs',{
+        name: req.session.user.name,
+        start_date: req.session.user.start_date,
+        end_date: req.session.user.end_date,
+        address: req.session.user.address
+      });
   } else {
-    conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD') from accounts where user_id='${id}'`, function(err, result) {
+    conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD'), address from accounts where user_id='${id}'`, function(err, result) {
       if (err) {
         res.writeHead(404, {
           "ContentType": "text/html"
@@ -204,12 +225,16 @@ app.post('/login', (req, res) => {
               id: id,
               pw: password,
               name: result.rows[0][1],
+              start_date: result.rows[0][2],
+              end_date: result.rows[0][3],
+              address: result.rows[0][4],
               authorized: true
             };
             res.render('detail.ejs', {
               name: result.rows[0][1],
               start_date: result.rows[0][2],
-              end_date: result.rows[0][3]
+              end_date: result.rows[0][3],
+              address: result.rows[0][4]
             });
           } else {
             res.render('index.ejs', {
