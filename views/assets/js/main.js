@@ -134,6 +134,7 @@
 					$message.classList.remove('visible');
 				};
 
+
 			// Events.
 			// Note: If you're *not* using AJAX, get rid of this event listener.
 				$form.addEventListener('submit', function(event) {
@@ -150,8 +151,29 @@
 					// Process form.
 					// Note: Doesn't actually do anything yet (other than report back with a "thank you"),
 					// but there's enough here to piece together a working AJAX submission call that does.
-						window.setTimeout(function() {
 
+						window.setTimeout(function() {
+							// $.ajax({
+							// 		url: "http://127.0.0.1:5000/login",
+							// 		dataType: "json",
+							// 		type: "POST",
+							// 		data: {
+							// 			ID: $(".logint-id").val(),
+							// 			password: $(".login-pass").val()
+							// 		},
+							// 		success: function () {
+							// 			$message._show('failure', 'Please try again.');
+							//
+							// 		},
+							// 		error: function () {
+							// 			$form.reset();
+							//
+							// 		// Enable submit.
+							// 			$submit.disabled = false;
+							// 			$message._show('failure', 'Please try again.');
+							//
+							// 		},
+							// 	});
 							// Reset form.
 								$form.reset();
 
@@ -159,8 +181,8 @@
 								$submit.disabled = false;
 
 							// Show message.
-								$message._show('success', 'Thank you!');
-								//$message._show('failure', 'Something went wrong. Please try again.');
+								// $message._show('success', 'Thank you!');
+								$message._show('failure', 'Please try again.');
 
 						}, 750);
 

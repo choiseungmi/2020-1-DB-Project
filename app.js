@@ -9,9 +9,10 @@ const oracledb = require("oracledb");
 var cookieParser = require('cookie-parser');
 var expressSession = require('express-session');
 app.use(express.static('views'));
+// app.use(express.static('views/statepage/vendor'));
 // app.set('views', './views/statepage');
 app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html')
+// app.set('view engine', 'html')
 require('dotenv').config();
 
 app.use(bodyParser.json());
@@ -33,8 +34,9 @@ oracledb.getConnection({
   }
   conn = con;
 });
+// oracledb.autoCommit = true;
 
-//쿠키와 세션을 미들웨어로 등록한다
+//쿠키와 세션을 미들웨어로 등록
 app.use(cookieParser());
 
 //세션 환경 세팅
@@ -56,7 +58,7 @@ app.get('/', (req, res) => {
   });
 })
 app.get('/login', (req, res) => {
-  res.render('statepage/login.html');
+  res.redirect('statepage/login.html');
 })
 
 app.get("/signup", function(req, res) {
@@ -83,12 +85,10 @@ app.post("/signup", function(request, response) {
         response.end("fail!!");
       } else {
         console.log("result : ", result);
-        response.writeHead(200, {
-          "ContentType": "text/html"
-        });
-        response.end("success!!");
+        response.redirect("/");
       }
     });
+    conn.commit();
   } else {
     response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
   }
@@ -98,22 +98,17 @@ app.post("/signup", function(request, response) {
 app.post('/login', (req, res) => {
   var id = req.body.ID
   var password = req.body.password;
-
   if (req.session.user) {
     console.log('이미 로그인 되어 있음');
     res.render('detail.ejs');
   } else {
     conn.execute(`select password, name from accounts where user_id='${id}'`, function(err, result) {
       if (err) {
-        console.log("로그인 중 에러가 발생했어요!!", err);
-        console.log("fail: " + id + password);
-        res.writeHead(400, {
+        res.writeHead(404, {
           "ContentType": "text/html"
         });
         res.render('statepage/404.html');
       } else {
-        console.log(result, result.rows.length);
-        console.log("output:", result.rows, trim(password));
         if (result.rows.length > 0) {
           if (password == trim(result.rows[0][0])) {
             req.session.user = {
@@ -123,10 +118,7 @@ app.post('/login', (req, res) => {
               authorized: true
             };
             res.render('detail.ejs');
-            console.log("sucess: " + id + password);
-            console.log(req.session.user['name']);
           } else {
-            console.log("wrong: " + id + password);
             res.render('index.ejs', {
               message: '비밀번호가 틀렸습니다'
             });
@@ -136,7 +128,6 @@ app.post('/login', (req, res) => {
             message: '존재하지 않는 아이디입니다'
           });
           res.end("fail!!");
-          console.log("0<user: " + id + password);
         }
         // console.log(result.metaData);  //테이블 스키마
         //         console.log(result.rows);
@@ -146,15 +137,12 @@ app.post('/login', (req, res) => {
 })
 router.route('/detail').get(
   function(req, res) {
-    console.log('/process/product  라우팅 함수 실행');
-
     //세션정보는 req.session 에 들어 있다
     if (req.session.user) //세션에 유저가 있다면
     {
       res.render('detail.ejs');
     } else {
       res.redirect('/');
-
     }
   }
 );
@@ -162,8 +150,6 @@ router.route('/detail').get(
 
 router.route('/logout').get( //설정된 쿠키정보를 본다
   function(req, res) {
-    console.log('/process/loginout 라우팅 함수호출 됨');
-
     if (req.session.user) {
       console.log('로그아웃 처리');
       req.session.destroy(
@@ -172,12 +158,10 @@ router.route('/logout').get( //설정된 쿠키정보를 본다
             console.log('세션 삭제시 에러');
             return;
           }
-          console.log('세션 삭제 성공');
           //파일 지정시 제일 앞에 / 를 붙여야 root 즉 public 안에서부터 찾게 된다
           res.redirect('/');
         }
       ); //세션정보 삭제
-
     } else {
       console.log('로긴 안되어 있음');
       res.redirect('/');
@@ -185,15 +169,12 @@ router.route('/logout').get( //설정된 쿠키정보를 본다
   }
 );
 
-
-//라우터 미들웨어 등록하는 구간에서는 라우터를 모두  등록한 이후에 다른 것을 세팅한다
-//그렇지 않으면 순서상 라우터 이외에 다른것이 먼저 실행될 수 있다
-app.use('/', router); //라우트 미들웨어를 등록한다
+app.use('/', router); //라우트 미들웨어 등록
 
 
 app.all('*',
   function(req, res) {
-    res.status(404).send('<h1> 요청 페이지 없음 </h1>');
+    res.status(404).redirect('statepage/404.html');
   }
 );
 

@@ -41,12 +41,12 @@
 		<form name=account id="signup-form" method="GET" action="/logout">
 			<!-- <form id="signup-form" method="post" action="member/signup_check.php"> -->
 		<input type="submit" value="logout">
-		<input type="submit" value="Go to Dashboard" onclick=Dash()>
+		<input type="submit" value="Go Dashboard" onclick=Dash()>
 			<span class="message"></span></form>
 		<%}else{%>
-			<form name=account id="signup-form" method="POST" action="/login">
-			<input type="text" name="ID" id="ID" placeholder="ID">
-			<input type="password" name="password" id="password" placeholder="Password">
+			<form class="account" name=account id="signup-form" method="POST" action="/login">
+			<input class ="login-id" type="text" name="ID" id="ID" placeholder="ID">
+			<input class="login-pass" type="password" name="password" id="password" placeholder="Password">
 			<input type="submit" value="Sign in">
 			<input type="button" value="Sign Up" onclick=regist()>
 				<span class="message"></span><p><%= message %></p></form>
@@ -69,7 +69,7 @@
 		</footer>
 
 		<!-- Scripts -->
-		<!-- <script src="assets/js/main.js"></script> -->
+		<script src="assets/js/main.js"></script>
 			<div id="bg"><div class="" style="background-image: url(&quot;images/bg01.jpg&quot;); background-position: center center;"></div><div class="visible top" style="background-image: url(&quot;images/bg02.jpg&quot;); background-position: center center;"></div><div class="" style="background-image: url(&quot;images/bg03.jpg&quot;); background-position: center center;"></div></div>
 
 
