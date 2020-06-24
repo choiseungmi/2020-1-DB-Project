@@ -22,7 +22,9 @@ CREATE TABLE accounts (
 	start_date DATE,
 	end_date DATE,
 	state NUMBER,
-	tel CHAR(15)
+	tel CHAR(15),
+	officer_name CHAR(50),
+	constraint pk_manage foreign key (officer_name) REFERENCES officer(name)
 );
 ```
 stat table
@@ -73,7 +75,8 @@ CREATE TABLE officer(
   name CHAR(50) not null primary key,
   area CHAR(50),
   TEL CHAR(15),
-  department CHAR(15)
+  department CHAR(15),
+  manage_num NUMBER DEFAULT 0
 );
 ```
 storage table
