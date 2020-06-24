@@ -25,3 +25,53 @@ CREATE TABLE accounts (
 	tel CHAR(15)
 );
 ```
+stat table
+---------------
+```
+CREATE TABLE STAT (
+  area CHAR(50) NOT NULL,
+  확진자수 INT default 0,
+  자가격리자수 INT default 0,
+  격리해제수 INT default 0,
+  PRIMARY KEY(area)
+);
+```
+자가격리자 table
+---------------
+```
+CREATE TABLE 자가격리자 (
+  user_id CHAR(50) NOT NULL,
+  area CHAR(50),
+  address CHAR(100),
+  name CHAR(10) NOT NULL,
+  password CHAR(100),
+  phone INT,
+  startdate DATE NOT NULL,
+  enddate DATE,
+  symptom INT default 0,
+  CHECK (enddate >= startdate + (INTERVAL '14' DAY)),
+  PRIMARY KEY(user_id)
+);
+```
+hospital table
+---------------
+```
+CREATE TABLE HOSPITAL(
+  name CHAR(10) NOT NULL,
+  area CHAR(50),
+  maximum int DEFAULT 0,
+  waiting int DEFAULT 0,
+  room int DEFAULT 0,
+  PRIMARY KEY(name)
+);
+```
+officer table
+---------------
+```
+CREATE TABLE officer(
+  name CHAR(50) not null primary key,
+  area CHAR(50),
+  TEL CHAR(15),
+  department CHAR(15)
+);
+```
