@@ -10,7 +10,9 @@ By choiseungmi/rollingman1
 
 It has an interface that performs the functions of emergency request, relief goods request, and statistical view using the self-isolator DB.
 
-# accounts table
+accounts table
+---------------
+```
 CREATE TABLE accounts (
 	user_id	CHAR(50) primary key,
 	name CHAR(50),
@@ -22,3 +24,4 @@ CREATE TABLE accounts (
   state NUMBER,
   tel CHAR(15)
 );
+```
