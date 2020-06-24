@@ -94,7 +94,50 @@ app.post("/signup", function(request, response) {
   } else {
     response.send('<script type="text/javascript">alert("비밀번호가 일치하지 않습니다. 다시 입력해주세요");location.href="/signup";</script>');
   }
+});
 
+app.post("/emergency", function(request, response) {
+  var id = request.body.id;
+  // 쿼리문 실행
+  if (request.session.user) {
+    // conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
+    //               values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
+    //               function(err, result) {
+    //   if (err) {
+    //     response.writeHead(500, {
+    //       "ContentType": "text/html"
+    //     });
+    //     response.end("fail!!");
+    //   } else {
+        response.render('emergency.ejs', {name:request.session.user.name });
+      // }
+    // });
+  }else{
+    response.redirect('/');
+  }
+    // conn.commit();
+});
+
+app.post("/product", function(request, response) {
+  var id = request.body.id;
+  // 쿼리문 실행
+  if (request.session.user) {
+    // conn.execute(`insert into accounts(user_id, name, email, password, address, start_date, end_date, state, tel)
+    //               values('${id}', '${name}', '${email}', '${password}','${address}', SYSDATE, SYSDATE+14, 1,'${tel}')`,
+    //               function(err, result) {
+    //   if (err) {
+    //     response.writeHead(500, {
+    //       "ContentType": "text/html"
+    //     });
+    //     response.end("fail!!");
+    //   } else {
+        response.render('product.ejs', {name:request.session.user.name });
+      // }
+    // });
+  }else{
+    response.redirect('/');
+  }
+    // conn.commit();
 });
 
 app.post('/login', (req, res) => {
@@ -104,7 +147,7 @@ app.post('/login', (req, res) => {
     console.log('이미 로그인 되어 있음');
     res.render('detail.ejs');
   } else {
-    conn.execute(`select password, name from accounts where user_id='${id}'`, function(err, result) {
+    conn.execute(`select password, name, TO_CHAR(start_date, 'YYYY-MM-DD'), TO_CHAR(end_date, 'YYYY-MM-DD') from accounts where user_id='${id}'`, function(err, result) {
       if (err) {
         res.writeHead(404, {
           "ContentType": "text/html"
@@ -120,7 +163,9 @@ app.post('/login', (req, res) => {
               authorized: true
             };
             res.render('detail.ejs',{
-	      message: id
+	      name: result.rows[0][1],
+        start_date:  result.rows[0][2],
+        end_date:  result.rows[0][3]
 	    });
           } else {
             res.render('index.ejs', {
