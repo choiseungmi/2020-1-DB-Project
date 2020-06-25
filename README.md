@@ -24,7 +24,8 @@ CREATE TABLE accounts (
 	state NUMBER,
 	tel CHAR(15),
 	officer_name CHAR(50),
-	constraint pk_manage foreign key (officer_name) REFERENCES officer(name)
+	constraint pk_manage foreign key (officer_name) REFERENCES officer(name),
+	CHECK (end_date >= start_date + (INTERVAL '14' DAY))
 );
 ```
 stat table
@@ -38,23 +39,6 @@ CREATE TABLE STAT (
   PRIMARY KEY(area)
 );
 // corona_num : 확진자수, isol_num : 격리자수, nisol_num:격리해제수
-```
-자가격리자 table
----------------
-```
-CREATE TABLE isolation (
-  user_id CHAR(50) NOT NULL,
-  area CHAR(50),
-  address CHAR(100),
-  name CHAR(10) NOT NULL,
-  password CHAR(100),
-  phone INT,
-  start_date DATE NOT NULL,
-  end_date DATE,
-  symptom INT default 0,
-  CHECK (end_date >= start_date + (INTERVAL '14' DAY)),
-  PRIMARY KEY(user_id)
-);
 ```
 hospital table
 ---------------
@@ -87,5 +71,15 @@ CREATE TABLE storage(
   area CHAR(50),
   product CHAR(50),
   num NUMBER default 0
+);
+```
+management table
+---------------
+```
+CREATE TABLE management(
+office_name CHAR(50) unsigned NOT NULL,  
+isolation_name CHAR(50) unsigned NOT NULL,  
+FOREIGN KEY(office_name) REFERENCES officer(name) ON UPDATE CASCADE ON DELETE CASCADE,
+FOREIGN KEY(isolation_name) REFERENCES accounts(name) ON UPDATE CASCADE ON DELETE CASCADE);
 );
 ```
