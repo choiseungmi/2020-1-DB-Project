@@ -15,7 +15,7 @@ accounts table
 ```
 CREATE TABLE accounts (
 	user_id	CHAR(50) primary key,
-	name CHAR(50),
+	name CHAR(50) NOT NULL,
 	email CHAR(50) NOT NULL,
 	password CHAR(100) NOT NULL,
 	address CHAR(50),
@@ -45,7 +45,7 @@ hospital table
 ```
 CREATE TABLE HOSPITAL(
   name CHAR(10) NOT NULL,
-  area CHAR(50),
+  area CHAR(50) NOT NULL,
   maximum int DEFAULT 0,
   waiting int DEFAULT 0,
   room int DEFAULT 0,
